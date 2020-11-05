@@ -599,7 +599,7 @@ def map_cis(genotype_df, variant_df, phenotype_df, phenotype_pos_df, covariates_
 
 def map_independent(genotype_df, variant_df, cis_df, phenotype_df, phenotype_pos_df, covariates_df,
                     group_s=None, fdr=0.05, fdr_col='qval', nperm=10000, 
-                    window=1000000, logger=None, seed=None, verbose=True):
+                    window=1000000, logger=None, seed=None, verbose=True, signif_th=None):
     """
     Run independent cis-QTL mapping (forward-backward regression)
 
@@ -620,7 +620,11 @@ def map_independent(genotype_df, variant_df, cis_df, phenotype_df, phenotype_pos
     ]
     if group_s is not None:
         cols += ['group_id', 'group_size']
-    signif_df = signif_df[cols]
+    if signif_th:
+        signif_threshold = float(signif_th)
+    else:
+        signif_threshold = signif_df['pval_beta'].max()
+    # signif_df = signif_df[cols]
     signif_threshold = signif_df['pval_beta'].max()
     # subset significant phenotypes
     if group_s is None:
@@ -639,6 +643,7 @@ def map_independent(genotype_df, variant_df, cis_df, phenotype_df, phenotype_pos
     logger.write('  * {} covariates'.format(covariates_df.shape[1]))
     logger.write('  * {} variants'.format(genotype_df.shape[0]))
     # print('Significance threshold: {}'.format(signif_threshold))
+    logger.write('  * Significance threshold pval_beta: {}'.format(signif_threshold))
     phenotype_df = phenotype_df.loc[ix]
     phenotype_pos_df = phenotype_pos_df.loc[ix]
 
@@ -673,10 +678,16 @@ def map_independent(genotype_df, variant_df, cis_df, phenotype_df, phenotype_pos
             forward_df = [signif_df.loc[phenotype_id]]  # initialize results with top variant
             covariates = covariates_df.values.copy()  # initialize covariates
             dosage_dict = {}
+            gp_range_list = genotype_range.tolist()
             while True:
                 # add variant to covariates
-                variant_id = forward_df[-1]['variant_id']
-                ig = genotype_df.values[ix_dict[variant_id], genotype_ix]
+                variant_id = forward_df[-1]['variant_id']                             
+                var_sig_whole_ix = ix_dict[variant_id]
+                var_sig_range_ix = gp_range_list.index(var_sig_whole_ix)
+                ig = np.array(genotypes_t[var_sig_range_ix, :])
+                
+                # ig = genotype_df.values[ix_dict[variant_id], genotype_ix] # error: unimputed gt
+                
                 dosage_dict[variant_id] = ig
                 covariates = np.hstack([covariates, ig.reshape(-1,1)]).astype(np.float32)
                 dof = phenotype_df.shape[1] - 2 - covariates.shape[1]
