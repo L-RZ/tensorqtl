@@ -108,9 +108,11 @@ def main():
                                  group_s=group_s, nperm=args.permutations, window=args.window,
                                  logger=logger, seed=args.seed, verbose=True)
             logger.write('  * writing output')
+            out_file = os.path.join(args.output_dir, args.prefix+'.cis_qtl.txt.gz')
+            res_df.to_csv(out_file, sep='\t', float_format='%.6g')  # to output table without qvalue 
             if has_rpy2:
                 calculate_qvalues(res_df, fdr=args.fdr, qvalue_lambda=args.qvalue_lambda, logger=logger)
-            out_file = os.path.join(args.output_dir, args.prefix+'.cis_qtl.txt.gz')
+            # out_file = os.path.join(args.output_dir, args.prefix+'.cis_qtl.txt.gz')
             res_df.to_csv(out_file, sep='\t', float_format='%.6g')
         elif args.mode=='cis_nominal':
             if not args.load_split:
