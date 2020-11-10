@@ -684,7 +684,7 @@ def map_independent(genotype_df, variant_df, cis_df, phenotype_df, phenotype_pos
                 variant_id = forward_df[-1]['variant_id']                             
                 var_sig_whole_ix = ix_dict[variant_id]
                 var_sig_range_ix = gp_range_list.index(var_sig_whole_ix)
-                ig = np.array(genotypes_t[var_sig_range_ix, :])
+                ig = genotypes_t[var_sig_range_ix, :].cpu().numpy()
                 
                 # ig = genotype_df.values[ix_dict[variant_id], genotype_ix] # error: unimputed gt
                 
