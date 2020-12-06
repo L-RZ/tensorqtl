@@ -25,7 +25,7 @@ virtualenv venv
 source venv/bin/activate
 pip3 install -r requirements.txt
 # verify
-python -c "import torch; print(torch.__version__); print('CUDA available: {} ({})'.format(torch.cuda.is_available(), torch.cuda.get_device_name(torch.cuda.current_device())))"
+python3 -c "import torch; print(torch.__version__); print('CUDA available: {} ({})'.format(torch.cuda.is_available(), torch.cuda.get_device_name(torch.cuda.current_device())))"
 ```
 
 #### Install rmate (optional)
