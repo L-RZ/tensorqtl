@@ -16,6 +16,19 @@ sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-
 sudo apt install r-base
 R --version
 ```
+##### Install qvalue package in R
+open R
+```bash
+R
+```
+```R
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("qvalue")
+
+```
+
+```
 #### Install Python 3
 ```bash
 sudo apt update
