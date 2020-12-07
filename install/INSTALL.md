@@ -25,10 +25,8 @@ R
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install("qvalue")
-
 ```
 
-```
 #### Install Python 3
 ```bash
 sudo apt update
